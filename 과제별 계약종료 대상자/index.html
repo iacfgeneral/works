@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>과제별 계약종료 대상자</title>
+<script src="./xlsx.full.min.js"></script>
+<style>
+:root{--canvas:#f3f6f8;--surface:#fff;--well:#f7f9fb;--ink:#24323f;--muted:#71808d;--line:#dfe5ea;--line-soft:#e8edf0;--accent:#c76700;--accent-dark:#a95000;--success:#168446;--success-bg:#f0fbf4;--danger:#b42318;--danger-bg:#fff3f2;--radius:9px;--space:8px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--ink);font-family:"Noto Sans KR","Malgun Gothic",Arial,sans-serif;font-size:16px;line-height:1.55}
+button,input{font:inherit}button{cursor:pointer}
+.wrap{max-width:1120px;margin:0 auto;padding:32px 20px 48px}
+.hero{padding:8px 0 28px;display:flex;justify-content:space-between;gap:24px;align-items:flex-end}
+.eyebrow{margin:0 0 6px;color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.12em}
+h1,h2{margin:0;font-weight:600;letter-spacing:-.035em;line-height:1.25}h1{font-size:30px}h2{font-size:20px}
+.lede{max-width:62ch;margin:10px 0 0;color:var(--muted);font-size:14px}
+.rule-note{max-width:300px;padding:12px 14px;border-left:3px solid var(--accent);background:var(--well);color:var(--muted);font-size:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-top:16px}
+.card-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:20px}.card-head p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.form-grid{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:16px;align-items:end}
+.field label{display:block;margin-bottom:7px;font-size:14px;font-weight:600}.field input[type=month]{width:100%;height:44px;border:1px solid #cbd5dc;border-radius:6px;background:#fff;color:var(--ink);padding:8px 12px}
+.field input:focus-visible,button:focus-visible{outline:3px solid rgba(199,103,0,.3);outline-offset:2px;border-color:var(--accent)}
+.drop{min-height:128px;border:1px dashed #c7d1d8;border-radius:7px;background:var(--well);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;transition:background 180ms ease,border-color 180ms ease}.drop.is-over{background:#fff8ef;border-color:var(--accent)}
+.drop strong{display:block;font-size:15px;font-weight:600}.drop small{display:block;margin-top:3px;color:var(--muted);font-size:12px}.file-action{margin-top:12px;border:1px solid #cbd5dc;border-radius:6px;background:#fff;padding:9px 14px;color:var(--ink);font-size:13px}.file-action:hover{border-color:var(--accent);color:var(--accent-dark)}
+.file-status{min-height:24px;margin-top:10px;color:var(--success);font-size:13px}.filename{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.filename.is-empty{color:var(--muted)}
+.actions{display:flex;align-items:center;gap:10px;margin-top:20px}.primary{border:1px solid var(--accent-dark);border-radius:6px;background:var(--accent);color:#fff;padding:11px 18px;font-size:14px;font-weight:600}.primary:hover{background:var(--accent-dark)}.primary:disabled{opacity:.45;cursor:not-allowed}.secondary{border:1px solid #cbd5dc;border-radius:6px;background:#fff;color:var(--ink);padding:10px 15px;font-size:13px}.secondary:disabled{opacity:.45;cursor:not-allowed}
+.message{display:none;margin-top:16px;padding:11px 13px;border-radius:6px;font-size:13px}.message.error{color:var(--danger);background:var(--danger-bg);border:1px solid #f2c8c4}.message.info{color:#34566b;background:#f0f7fb;border:1px solid #c9e0ec}.message.show{display:block}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);margin:0 0 18px}.stat{padding:14px 16px;border-right:1px solid var(--line-soft)}.stat:last-child{border-right:0}.stat-label{display:block;color:var(--muted);font-size:12px}.stat-value{display:block;margin-top:2px;color:var(--ink);font-size:23px;font-weight:600;font-variant-numeric:tabular-nums}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:7px}.result{width:100%;min-width:960px;border-collapse:collapse;font-size:13px}.result th,.result td{padding:11px 12px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--line-soft)}.result th{background:var(--well);color:#60707d;font-weight:600}.result tbody tr:last-child td{border-bottom:0}.result td:first-child,.result th:first-child{text-align:center;width:58px}.empty{text-align:center!important;color:var(--muted);padding:42px 12px!important}.date-cell{font-variant-numeric:tabular-nums}
+.footnote{margin:12px 0 0;color:var(--muted);font-size:12px}.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:720px){.wrap{padding:24px 16px 40px}.hero{display:block}.rule-note{max-width:none;margin-top:20px}.form-grid{grid-template-columns:1fr}.card{padding:20px}.stats{grid-template-columns:1fr}.stat{border-right:0;border-bottom:1px solid var(--line-soft)}.stat:last-child{border-bottom:0}.actions{align-items:stretch;flex-direction:column}.primary,.secondary{width:100%;min-height:44px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <div><p class="eyebrow">CONTRACT END REPORT</p><h1>과제별 계약종료 대상자</h1><p class="lede">엑셀의 참여 이력을 과제 단위로 묶어, 선택한 년월에 계약이 종료되는 대상자를 추출합니다.</p></div>
+    <div class="rule-note">직번·성명·과제번호가 같은 행을 하나의 그룹으로 집계하고, 참여시작일자는 최소값, 참여종료일자는 최대값을 사용합니다.</div>
+  </header>
+
+  <section class="card" aria-labelledby="input-title">
+    <div class="card-head"><div><h2 id="input-title">파일과 기준월 입력</h2><p>첫 번째 시트를 읽습니다. 원본 파일은 브라우저 안에서만 처리됩니다.</p></div></div>
+    <div class="form-grid">
+      <div>
+        <div class="drop" id="dropZone"><div><strong>엑셀 파일을 선택하거나 끌어 놓으세요</strong><small>.xlsx, .xls · 헤더 행이 포함된 파일</small><button type="button" class="file-action" id="pickButton">파일 선택</button><input class="visually-hidden" type="file" id="fileInput" accept=".xlsx,.xls" aria-label="엑셀 파일 선택"></div></div>
+        <div class="file-status" aria-live="polite"><span id="fileName" class="filename is-empty">선택된 파일이 없습니다.</span></div>
+      </div>
+      <div class="field"><label for="monthInput">대상 년월</label><input type="month" id="monthInput" name="month" aria-describedby="monthHelp"><p class="footnote" id="monthHelp">최대 참여종료일자의 년월과 일치하는 그룹만 포함됩니다.</p></div>
+    </div>
+    <div class="actions"><button type="button" class="primary" id="runButton" disabled>대상 추출</button><button type="button" class="secondary" id="clearButton">초기화</button></div>
+    <div class="message error" id="errorMessage" role="alert"></div><div class="message info" id="infoMessage" role="status"></div>
+  </section>
+
+  <section class="card" aria-labelledby="result-title">
+    <div class="card-head"><div><p class="eyebrow">EXTRACTION RESULT</p><h2 id="result-title">추출 결과</h2><p id="resultDescription">파일을 업로드하고 대상 년월을 선택한 뒤 추출하세요.</p></div><button type="button" class="secondary" id="downloadButton" disabled>XLSX 다운로드</button></div>
+    <div class="stats" aria-label="추출 요약"><div class="stat"><span class="stat-label">대상 그룹</span><span class="stat-value" id="resultCount">0</span></div><div class="stat"><span class="stat-label">읽은 행</span><span class="stat-value" id="rowCount">0</span></div><div class="stat"><span class="stat-label">기준 년월</span><span class="stat-value" id="selectedMonth">-</span></div></div>
+    <div class="table-wrap"><table class="result"><thead><tr><th scope="col">순번</th><th scope="col">직번</th><th scope="col">성명</th><th scope="col">과제번호</th><th scope="col">과제명</th><th scope="col">연구책임자</th><th scope="col">참여시작일자</th><th scope="col">참여종료일자</th></tr></thead><tbody id="resultBody"><tr><td class="empty" colspan="8">아직 추출한 결과가 없습니다.</td></tr></tbody></table></div>
+    <p class="footnote">참여종료일자는 원본의 최대값을 그대로 사용합니다. 종료일자에서 1일을 차감하지 않습니다.</p>
+  </section>
+</main>
+<script>
+const state={file:null,rows:[],results:[],month:""};
+const FALLBACK={emp:6,name:4,project:13,start:21,end:22,projectName:[7,14,15],principal:[8,9,10]};
+const FIELD_ALIASES={projectName:["과제명","과제명칭","연구과제명","사업명"],principal:["연구책임자","책임연구자","연구책임자성명","책임자"]};
+function clean(value){return value===null||value===undefined?"":String(value).trim()}
+function normalizeHeader(value){return clean(value).replace(/[\s_()（）［］[\]-]/g,"").toLowerCase()}
+function parseDate(value){
+  if(value===null||value===undefined||value==="") return "";
+  if(typeof value==="number"&&Number.isFinite(value)&&window.XLSX&&XLSX.SSF&&XLSX.SSF.parse_date_code){const date=XLSX.SSF.parse_date_code(value);if(date&&date.y)return String(date.y).padStart(4,"0")+"-"+String(date.m).padStart(2,"0")+"-"+String(date.d).padStart(2,"0")}
+  const text=clean(value).replace(/[.\/]/g,"-");const compact=text.match(/^(\d{4})(\d{2})(\d{2})$/);if(compact)return compact[1]+"-"+compact[2]+"-"+compact[3];const match=text.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);return match?match[1]+"-"+match[2].padStart(2,"0")+"-"+match[3].padStart(2,"0"):text
+}
+function dateValue(value){const text=parseDate(value);return /^\d{4}-\d{2}-\d{2}$/.test(text)?text:""}
+function findHeaderRow(rows){for(let index=0;index<Math.min(rows.length,12);index++){const text=(rows[index]||[]).map(normalizeHeader);if(text.includes("직번")&&text.includes("성명")&&text.includes("과제번호"))return index}return 0}
+function getHeaderIndex(headers,aliases){for(const alias of aliases){const wanted=normalizeHeader(alias);const index=headers.findIndex(value=>{const normalized=normalizeHeader(value);return normalized===wanted||normalized.includes(wanted)});if(index>=0)return index}return -1}
+function columnIndexes(headers){return{projectName:getHeaderIndex(headers,FIELD_ALIASES.projectName),principal:getHeaderIndex(headers,FIELD_ALIASES.principal)}}
+function formatMonth(month){return month?month.replace("-","년 ")+"월":"-"}
+function keyOf(emp,name,project){return [clean(emp),clean(name),clean(project)].join("\u001f")}
+async function readExcel(file){const buffer=await file.arrayBuffer();const workbook=XLSX.read(buffer,{type:"array",cellDates:false});const sheet=workbook.Sheets[workbook.SheetNames[0]];if(!sheet)throw new Error("첫 번째 시트를 찾을 수 없습니다.");return XLSX.utils.sheet_to_json(sheet,{header:1,defval:"",raw:true})}
+function setMessage(element,text){element.textContent=text;element.classList.toggle("show",Boolean(text))}
+function setFile(file){state.file=file||null;const name=document.getElementById("fileName");name.textContent=file?file.name:"선택된 파일이 없습니다.";name.classList.toggle("is-empty",!file);document.getElementById("runButton").disabled=!file||!document.getElementById("monthInput").value;if(file)setMessage(document.getElementById("errorMessage"),"")}
+function renderResults(){const body=document.getElementById("resultBody");body.innerHTML="";if(!state.results.length){body.innerHTML='<tr><td class="empty" colspan="8">선택한 년월에 해당하는 계약종료 대상자가 없습니다.</td></tr>';return}for(const item of state.results){const row=document.createElement("tr");[item.순번,item.직번,item.성명,item.과제번호,item.과제명,item.연구책임자,item.참여시작일자,item.참여종료일자].forEach((value,index)=>{const cell=document.createElement("td");cell.textContent=value||"";if(index>=6)cell.className="date-cell";row.appendChild(cell)});body.appendChild(row)}}
+function buildResults(rows,month){
+  const headerRow=findHeaderRow(rows),headers=(rows[headerRow]||[]).map(clean),dynamic=columnIndexes(headers),groups=new Map(),startRow=headerRow+1;
+  for(let rowIndex=startRow;rowIndex<rows.length;rowIndex++){const row=rows[rowIndex]||[];const emp=clean(row[FALLBACK.emp]),name=clean(row[FALLBACK.name]),project=clean(row[FALLBACK.project]);if(!emp||!name||!project)continue;const start=dateValue(row[FALLBACK.start]),end=dateValue(row[FALLBACK.end]);const key=keyOf(emp,name,project);if(!groups.has(key))groups.set(key,{직번:emp,성명:name,과제번호:project,과제명:"",연구책임자:"",참여시작일자:"",참여종료일자:""});const group=groups.get(key);const projectName=dynamic.projectName>=0?clean(row[dynamic.projectName]):FALLBACK.projectName.map(index=>clean(row[index])).find(Boolean)||"";const principal=dynamic.principal>=0?clean(row[dynamic.principal]):FALLBACK.principal.map(index=>clean(row[index])).find(Boolean)||"";if(!group.과제명&&projectName)group.과제명=projectName;if(!group.연구책임자&&principal)group.연구책임자=principal;if(start&&(!group.참여시작일자||start<group.참여시작일자))group.참여시작일자=start;if(end&&(!group.참여종료일자||end>group.참여종료일자))group.참여종료일자=end}
+  return{rowsRead:Math.max(0,rows.length-startRow),results:[...groups.values()].filter(group=>group.참여종료일자.startsWith(month)).sort((a,b)=>a.직번.localeCompare(b.직번,"ko-KR",{numeric:true})||a.과제번호.localeCompare(b.과제번호,"ko-KR",{numeric:true})).map((group,index)=>({...group,순번:index+1}))}
+}
+async function extract(){const error=document.getElementById("errorMessage"),info=document.getElementById("infoMessage");setMessage(error,"");setMessage(info,"");if(typeof XLSX==="undefined"){setMessage(error,"Excel 처리 라이브러리를 불러오지 못했습니다. 같은 폴더의 xlsx.full.min.js 파일을 확인하세요.");return}if(!state.file){setMessage(error,"엑셀 파일을 선택해 주세요.");return}const month=document.getElementById("monthInput").value;if(!month){setMessage(error,"대상 년월을 선택해 주세요.");return}const button=document.getElementById("runButton");button.disabled=true;button.textContent="추출 중...";try{state.rows=await readExcel(state.file);const built=buildResults(state.rows,month);state.results=built.results;state.month=month;document.getElementById("rowCount").textContent=built.rowsRead.toLocaleString("ko-KR");document.getElementById("resultCount").textContent=state.results.length.toLocaleString("ko-KR");document.getElementById("selectedMonth").textContent=formatMonth(month);document.getElementById("downloadButton").disabled=!state.results.length;document.getElementById("resultDescription").textContent=state.results.length?formatMonth(month)+" 기준으로 계약종료 대상자를 추출했습니다.":formatMonth(month)+"에 해당하는 대상자가 없습니다.";renderResults();if(!state.results.length)setMessage(info,"집계된 그룹은 있지만 최대 참여종료일자의 년월이 기준월과 일치하는 그룹이 없습니다.")}catch(errorValue){setMessage(error,"처리 중 오류가 발생했습니다: "+(errorValue&&errorValue.message?errorValue.message:String(errorValue)))}finally{button.disabled=false;button.textContent="대상 추출"}}
+function download(){if(typeof XLSX==="undefined"||!state.results.length)return;const columns=["순번","직번","성명","과제번호","과제명","연구책임자","참여시작일자","참여종료일자"];const rows=state.results.map(item=>{const row={};columns.forEach(column=>{row[column]=item[column]||""});return row});const sheet=XLSX.utils.json_to_sheet(rows,{header:columns});const book=XLSX.utils.book_new();XLSX.utils.book_append_sheet(book,sheet,"계약종료대상자");XLSX.writeFile(book,state.month+"_과제별계약종료대상자.xlsx")}
+document.getElementById("pickButton").addEventListener("click",()=>document.getElementById("fileInput").click());document.getElementById("fileInput").addEventListener("change",event=>setFile(event.target.files[0]||null));document.getElementById("monthInput").addEventListener("change",event=>{document.getElementById("runButton").disabled=!state.file||!event.target.value});document.getElementById("runButton").addEventListener("click",extract);document.getElementById("downloadButton").addEventListener("click",download);document.getElementById("clearButton").addEventListener("click",()=>{state.file=null;state.rows=[];state.results=[];state.month="";document.getElementById("fileInput").value="";document.getElementById("monthInput").value="";setFile(null);document.getElementById("rowCount").textContent="0";document.getElementById("resultCount").textContent="0";document.getElementById("selectedMonth").textContent="-";document.getElementById("downloadButton").disabled=true;document.getElementById("resultDescription").textContent="파일을 업로드하고 대상 년월을 선택한 뒤 추출하세요.";setMessage(document.getElementById("errorMessage"),"");setMessage(document.getElementById("infoMessage"),"");renderResults()});const drop=document.getElementById("dropZone");["dragenter","dragover"].forEach(type=>drop.addEventListener(type,event=>{event.preventDefault();drop.classList.add("is-over")}));["dragleave","drop"].forEach(type=>drop.addEventListener(type,event=>{event.preventDefault();drop.classList.remove("is-over")}));drop.addEventListener("drop",event=>{const file=event.dataTransfer.files[0];if(file)setFile(file)});
+</script>
+</body>
+</html>
