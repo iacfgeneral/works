@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="브라우저에서 바로 사용하는 연구행정 업무 도구 모음입니다.">
+  <title>연구행정 업무 도구</title>
+  <style>
+    :root {
+      --canvas: #f3f6f8;
+      --surface: #ffffff;
+      --well: #f7f9fb;
+      --ink: #24323f;
+      --ink-strong: #182534;
+      --muted: #5f6d79;
+      --line: #dfe5ea;
+      --line-soft: #e8edf0;
+      --accent: #a95000;
+      --accent-dark: #873f00;
+      --accent-soft: #fff8ef;
+      --radius: 9px;
+      --space: 8px;
+      --content-width: 1080px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+    a:focus-visible {
+      outline: 3px solid var(--accent-dark);
+      outline-offset: 4px;
+    }
+
+    .site-shell {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      width: min(100% - 40px, var(--content-width));
+      margin-inline: auto;
+    }
+    .site-header {
+      border-bottom: 1px solid var(--line-soft);
+      background: rgba(243, 246, 248, .92);
+    }
+    .header-inner {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: calc(var(--space) * 3);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space);
+      color: var(--ink-strong);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -.02em;
+    }
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--accent);
+    }
+    .brand-mark svg { width: 18px; height: 18px; }
+    .header-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    main { flex: 1; }
+    .hero {
+      padding: 64px 0 48px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(220px, .65fr);
+      gap: 48px;
+      align-items: end;
+    }
+    .eyebrow {
+      margin: 0 0 var(--space);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .13em;
+    }
+    h1, h2, p { margin-top: 0; }
+    h1, h2 {
+      color: var(--ink-strong);
+      font-weight: 600;
+      letter-spacing: -.04em;
+      line-height: 1.25;
+    }
+    h1 {
+      max-width: 14ch;
+      margin-bottom: 16px;
+      font-size: clamp(32px, 5vw, 48px);
+    }
+    .hero-copy {
+      max-width: 58ch;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .hero-note {
+      padding: 16px 18px;
+      border-left: 3px solid var(--accent);
+      background: var(--well);
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .hero-note strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .tools-section {
+      padding: 0 0 64px;
+    }
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    h2 {
+      margin-bottom: 0;
+      font-size: 22px;
+    }
+    .section-caption {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .tool-card {
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      text-decoration: none;
+      transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    }
+    .tool-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 14px rgba(36, 50, 63, .07);
+    }
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .tool-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 26px;
+      padding-inline: 8px;
+      border-radius: 4px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .06em;
+    }
+    .launch-label {
+      color: var(--accent-dark);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .tool-card h3 {
+      max-width: 20ch;
+      margin: 34px 0 10px;
+      color: var(--ink-strong);
+      font-size: 21px;
+      font-weight: 600;
+      letter-spacing: -.035em;
+      line-height: 1.35;
+    }
+    .tool-card p {
+      max-width: 46ch;
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .tool-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--line-soft);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .tool-meta span + span::before {
+      content: "·";
+      margin-right: 8px;
+      color: var(--accent);
+    }
+
+    .privacy {
+      padding: 20px 0 56px;
+      border-top: 1px solid var(--line-soft);
+    }
+    .privacy-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .privacy-title {
+      flex: 0 0 auto;
+      margin: 0;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .privacy-copy {
+      max-width: 68ch;
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .site-footer {
+      padding: 20px 0;
+      border-top: 1px solid var(--line-soft);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    @media (max-width: 720px) {
+      .container { width: min(100% - 32px, var(--content-width)); }
+      .header-inner { min-height: 64px; }
+      .header-label { display: none; }
+      .hero {
+        padding: 48px 0 40px;
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      h1 { max-width: 11ch; }
+      .tools-section { padding-bottom: 48px; }
+      .section-heading { display: block; }
+      .section-caption { margin-top: 4px; }
+      .tool-grid { grid-template-columns: 1fr; }
+      .tool-card { min-height: 240px; padding: 20px; }
+      .privacy { padding-bottom: 40px; }
+      .privacy-inner { display: block; }
+      .privacy-copy { margin-top: 4px; }
+      .footer-inner { display: block; }
+      .footer-inner span + span { display: block; margin-top: 4px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="./index.html" aria-label="연구행정 업무 도구 홈">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+              <path d="M8 7h8M8 11h8M8 15h3M14 15h2"></path>
+            </svg>
+          </span>
+          <span>연구행정 업무 도구</span>
+        </a>
+        <span class="header-label">브라우저에서 바로 시작</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="container hero" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">WORK TOOLS / BROWSER LOCAL</p>
+          <h1 id="page-title">반복되는 연구행정 업무를 더 간단하게</h1>
+          <p class="hero-copy">엑셀 파일을 브라우저에서 확인하고 필요한 결과를 바로 내려받을 수 있는 업무 도구 모음입니다. 필요한 작업을 선택해 시작하세요.</p>
+        </div>
+        <aside class="hero-note">
+          <strong>설치 없이 사용</strong>
+          각 도구는 별도 설정이나 로그인 없이 정해진 입력 파일을 읽어 결과를 만듭니다.
+        </aside>
+      </section>
+
+      <section class="container tools-section" aria-labelledby="tools-title">
+        <div class="section-heading">
+          <h2 id="tools-title">사용 가능한 도구</h2>
+          <p class="section-caption">필요한 작업을 선택하세요.</p>
+        </div>
+        <div class="tool-grid">
+          <a class="tool-card" href="./연구인력 월별 인건비 검증/index.html">
+            <div class="card-top">
+              <span class="tool-index">01</span>
+              <span class="launch-label">도구 열기 →</span>
+            </div>
+            <h3>연구인력 월별 인건비 검증</h3>
+            <p>contractsubject, joinlist, ingcontract, currentemp 네 개의 Excel 입력 파일을 비교해 월별 인건비를 검증합니다.</p>
+            <div class="tool-meta">
+              <span>입력 4개</span>
+              <span>CSV·XLSX 출력</span>
+            </div>
+          </a>
+
+          <a class="tool-card" href="./과제별 계약종료 대상자/index.html">
+            <div class="card-top">
+              <span class="tool-index">02</span>
+              <span class="launch-label">도구 열기 →</span>
+            </div>
+            <h3>과제별 계약종료 대상자</h3>
+            <p>엑셀의 참여 이력을 과제 단위로 묶고, 선택한 년월에 계약이 종료되는 대상자를 추출합니다.</p>
+            <div class="tool-meta">
+              <span>기준 년월 선택</span>
+              <span>XLSX 출력</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="privacy" aria-labelledby="privacy-title">
+        <div class="container privacy-inner">
+          <h2 class="privacy-title" id="privacy-title">파일 처리 안내</h2>
+          <p class="privacy-copy">업로드한 파일은 기존 도구의 안내처럼 브라우저 안에서만 처리됩니다. 원본 파일을 별도 서버로 전송하지 않고, 결과 파일은 사용자의 기기에서 생성됩니다.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <span>연구행정 업무 도구</span>
+        <span>정적 페이지 · 외부 의존성 없음</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
